@@ -10,14 +10,14 @@ import Foundation
 import UICKeyChainStore
 class UserDefaultsPasscodeRepository: PasscodeRepositoryType {
     
-    private let passcodeKey = "passcode.lock.passcode"
+    fileprivate let passcodeKey = "passcode.lock.passcode"
     
-    private lazy var defaults: NSUserDefaults = {
+    fileprivate lazy var defaults: UserDefaults = {
         
-        return NSUserDefaults.standardUserDefaults()
+        return UserDefaults.standard
     }()
   
-  private lazy var keyChainStore: UICKeyChainStore = {
+  fileprivate lazy var keyChainStore: UICKeyChainStore = {
     
     return UICKeyChainStore(service: "sh.blink.auth")
     
@@ -33,7 +33,7 @@ class UserDefaultsPasscodeRepository: PasscodeRepositoryType {
     }
     
     var passcode: [String]? {
-      let passCodeString = keyChainStore.stringForKey(passcodeKey)
+      let passCodeString = keyChainStore.string(forKey: passcodeKey)
       var passCodeArray = [String]()
       for code in (passCodeString?.characters)! {
         passCodeArray.append(String(code))
@@ -41,7 +41,7 @@ class UserDefaultsPasscodeRepository: PasscodeRepositoryType {
       return passCodeArray
     }
     
-    func savePasscode(passcode: [String]) {
+    func savePasscode(_ passcode: [String]) {
         var passCodeString = ""
       for code in passcode {
         passCodeString += code
@@ -51,7 +51,7 @@ class UserDefaultsPasscodeRepository: PasscodeRepositoryType {
     
     func deletePasscode() {
         
-        defaults.removeObjectForKey(passcodeKey)
+        defaults.removeObject(forKey: passcodeKey)
         defaults.synchronize()
     }
 }
