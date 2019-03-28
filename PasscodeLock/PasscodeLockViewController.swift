@@ -36,8 +36,8 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
     @IBOutlet open weak var placeholdersX: NSLayoutConstraint?
     
     open var successCallback: ((_ lock: PasscodeLockType) -> Void)?
-    open var completionCallback: (() -> Void)?
-    open var dismissCompletionCallback: (()->Void)?
+    @objc open var completionCallback: (() -> Void)?
+    @objc open var dismissCompletionCallback: (()->Void)?
     open var animateOnDismiss: Bool
     open var notificationCenter: NotificationCenter?
     
@@ -52,7 +52,7 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
     let stateRemovePasscode = "RemovePasscode"
     let stateSetPasscode = "SetPasscode"
   
-  public convenience init(stateString: String){
+  @objc public convenience init(stateString: String) {
     var state : LockState
     switch stateString {
     case "EnterPassCode":
@@ -137,22 +137,22 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
     
     fileprivate func setupEvents() {
         
-        notificationCenter?.addObserver(self, selector: #selector(PasscodeLockViewController.appWillEnterForegroundHandler(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        notificationCenter?.addObserver(self, selector: #selector(PasscodeLockViewController.appDidEnterBackgroundHandler(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        notificationCenter?.addObserver(self, selector: #selector(PasscodeLockViewController.appWillEnterForegroundHandler(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+        notificationCenter?.addObserver(self, selector: #selector(PasscodeLockViewController.appDidEnterBackgroundHandler(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
     fileprivate func clearEvents() {
         
-        notificationCenter?.removeObserver(self, name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        notificationCenter?.removeObserver(self, name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        notificationCenter?.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+        notificationCenter?.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
-    open func appWillEnterForegroundHandler(_ notification: Notification) {
+    @objc open func appWillEnterForegroundHandler(_ notification: Notification) {
         
         authenticateWithBiometrics()
     }
     
-    open func appDidEnterBackgroundHandler(_ notification: Notification) {
+  @objc open func appDidEnterBackgroundHandler(_ notification: Notification) {
         
         shouldTryToAuthenticateWithBiometrics = false
     }
@@ -194,12 +194,12 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
         // if presented as modal
         if presentingViewController?.presentedViewController == self {
             
-            dismiss(animated: animateOnDismiss, completion: { [weak self] _ in
+            dismiss(animated: animateOnDismiss) { [weak self] in
                 
                 self?.dismissCompletionCallback?()
                 
                 completionHandler?()
-            })
+            }
             
             return
             
@@ -265,10 +265,10 @@ open class PasscodeLockViewController: UIViewController, PasscodeLockTypeDelegat
         
         deleteSignButton?.isEnabled = true
         animatePlaceholders(placeholders, toState: .inactive)
-        dismissPasscodeLock(lock, completionHandler: { [weak self] _ in
+        dismissPasscodeLock(lock) { [weak self] in
             self?.successCallback?(lock)
             self?.completionCallback?()
-        })
+        }
     }
     
     open func passcodeLockDidFail(_ lock: PasscodeLockType) {

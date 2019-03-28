@@ -34,11 +34,7 @@ class UserDefaultsPasscodeRepository: PasscodeRepositoryType {
     
     var passcode: [String]? {
       let passCodeString = keyChainStore.string(forKey: passcodeKey)
-      var passCodeArray = [String]()
-      for code in (passCodeString?.characters)! {
-        passCodeArray.append(String(code))
-      }
-      return passCodeArray
+      return (passCodeString ?? "").components(separatedBy: "")
     }
     
     func savePasscode(_ passcode: [String]) {
