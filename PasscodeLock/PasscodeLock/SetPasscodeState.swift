@@ -28,9 +28,9 @@ struct SetPasscodeState: PasscodeLockStateType {
     }
     
     func acceptPasscode(_ passcode: [String], fromLock lock: PasscodeLockType) {
-        
+      DispatchQueue.main.async {
         let nextState = ConfirmPasscodeState(passcode: passcode)
-        
         lock.changeStateTo(nextState)
+      }
     }
 }
