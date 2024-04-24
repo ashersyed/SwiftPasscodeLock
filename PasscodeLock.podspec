@@ -9,6 +9,8 @@ s.source = { :git => 'https://github.com/yankodimitrov/SwiftPasscodeLock.git' }
 
 s.ios.deployment_target = '8.0'
 
+s.ios.dependency 'UICKeyChainStore'
+
 s.source_files = 'PasscodeLock/*.{h,swift}',
 				 'PasscodeLock/*/*.{swift}'
 
